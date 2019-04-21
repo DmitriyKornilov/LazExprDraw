@@ -4,10 +4,10 @@
 
 Шрифты XITS доступны на [github](https://github.com/alif-type/xits). Если нужны только стандартные функции модулей и не требуется особого форматирования текста, то необходимы только два файла с начертаниями Regular и Italic.
 
-*LazExprDraw содержит классы, использующиеся для отображения математических формул.
-*LazExprMake используется для создания классов на основании символьной записи формулы.
-*Руководство пользователя приведено в "LazExprDraw_Guide.pdf".
-*Приложение LazExprGuide - это справочник по использованию LazExprMake и демо
+* LazExprDraw содержит классы, использующиеся для отображения математических формул.
+* LazExprMake используется для создания классов на основании символьной записи формулы.
+* Руководство пользователя приведено в "LazExprDraw_Guide.pdf".
+* Приложение LazExprGuide - это справочник по использованию LazExprMake и демо
 
 Учитывая пожелания автора оригинального кода, модули LazExprDraw и LazExprMake предлагаются по свободной лицензии [MIT](https://opensource.org/licenses/MIT) 
 
@@ -19,9 +19,9 @@ In the original, GDI / Windows API functions and the proprietary font Times New 
 
 XITS fonts are available at [github](https://github.com/alif-type/xits). If only standard functions of units are needed and no special text formatting is required, then only two files with Regular and Italic styles are needed.
 
-*LazExprDraw unit contains classes used to display mathematical formulas.
-*LazExprMake unit is used to create classes based on a symbolic formula entry.
-*The user manual is provided in "LazExprDraw_Guide.pdf".
-*The LazExprGuide application is a guide to using symbolic formula entry in unit LazExprMake and the demo.
+* LazExprDraw unit contains classes used to display mathematical formulas.
+* LazExprMake unit is used to create classes based on a symbolic formula entry.
+* The user manual is provided in "LazExprDraw_Guide.pdf".
+* The LazExprGuide application is a guide to using symbolic formula entry in unit LazExprMake and the demo.
 
 Considering the wishes of the author of the original code, the LazExprDraw and LazExprMake modules are offered under the free license [MIT](https://opensource.org/licenses/MIT)
