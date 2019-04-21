@@ -1,0 +1,140 @@
+object Form1: TForm1
+  Left = 400
+  Height = 438
+  Top = 250
+  Width = 703
+  Caption = 'Справочник LazExprMake'
+  ClientHeight = 438
+  ClientWidth = 703
+  OnCreate = FormCreate
+  OnDestroy = FormDestroy
+  OnShow = FormShow
+  LCLVersion = '2.0.0.4'
+  object TabControl1: TTabControl
+    Left = 0
+    Height = 399
+    Top = 0
+    Width = 703
+    MultiLine = True
+    OnChange = TabControl1Change
+    TabIndex = 0
+    Tabs.Strings = (
+      '1. Инфо'
+      '2. Знаки операций'
+      '3. Символы до операндов'
+      '4. Символы после операндов'
+      '5. Конкатенация выражений'
+      '6. Скобки'
+      '7. Токены греческого алфавита'
+      '8. Токены-стрелки'
+      '9. Токены прочие'
+      '10. Зарезервированные функции'
+    )
+    Align = alClient
+    TabOrder = 0
+    object ListBox1: TListBox
+      Left = 2
+      Height = 354
+      Top = 43
+      Width = 150
+      Align = alLeft
+      BorderStyle = bsNone
+      ItemHeight = 0
+      OnClick = ListBox1Click
+      ScrollWidth = 150
+      TabOrder = 1
+    end
+    object Splitter1: TSplitter
+      Left = 152
+      Height = 354
+      Top = 43
+      Width = 5
+      ResizeStyle = rsLine
+    end
+    object Panel1: TPanel
+      Left = 157
+      Height = 354
+      Top = 43
+      Width = 544
+      Align = alClient
+      BevelOuter = bvNone
+      ClientHeight = 354
+      ClientWidth = 544
+      TabOrder = 3
+      object Memo1: TMemo
+        Left = 0
+        Height = 219
+        Top = 0
+        Width = 544
+        Align = alTop
+        Lines.Strings = (
+          'Memo1'
+        )
+        ScrollBars = ssAutoVertical
+        TabOrder = 0
+      end
+      object Splitter2: TSplitter
+        Cursor = crVSplit
+        Left = 0
+        Height = 5
+        Top = 219
+        Width = 544
+        Align = alTop
+        ResizeAnchor = akTop
+        ResizeStyle = rsLine
+      end
+      object ScrollBox1: TScrollBox
+        Left = 0
+        Height = 130
+        Top = 224
+        Width = 544
+        HorzScrollBar.Page = 90
+        VertScrollBar.Page = 90
+        Align = alClient
+        BorderStyle = bsNone
+        ClientHeight = 130
+        ClientWidth = 544
+        Color = clWindow
+        ParentColor = False
+        TabOrder = 2
+        object Image1: TImage
+          AnchorSideLeft.Control = ScrollBox1
+          AnchorSideTop.Control = ScrollBox1
+          Left = 0
+          Height = 90
+          Top = 0
+          Width = 90
+          AutoSize = True
+        end
+      end
+    end
+  end
+  object Panel2: TPanel
+    Left = 0
+    Height = 39
+    Top = 399
+    Width = 703
+    Align = alBottom
+    AutoSize = True
+    ClientHeight = 39
+    ClientWidth = 703
+    TabOrder = 1
+    object Button1: TButton
+      AnchorSideLeft.Control = Panel2
+      AnchorSideBottom.Control = Panel2
+      AnchorSideBottom.Side = asrBottom
+      Left = 7
+      Height = 25
+      Top = 7
+      Width = 65
+      Anchors = [akLeft, akBottom]
+      AutoSize = True
+      BorderSpacing.Left = 6
+      BorderSpacing.Top = 6
+      BorderSpacing.Bottom = 6
+      Caption = 'Печать'
+      OnClick = Button1Click
+      TabOrder = 0
+    end
+  end
+end
