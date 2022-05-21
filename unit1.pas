@@ -24,11 +24,15 @@ type
     Memo1: TMemo;
     Panel1: TPanel;
     Panel2: TPanel;
+    RusRadioButton: TRadioButton;
+    EngRadioButton: TRadioButton;
     ScrollBox1: TScrollBox;
     Splitter1: TSplitter;
     Splitter2: TSplitter;
     TabControl1: TTabControl;
     procedure Button1Click(Sender: TObject);
+    procedure EngRadioButtonClick(Sender: TObject);
+    procedure RusRadioButtonClick(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
     procedure FormShow(Sender: TObject);
@@ -38,20 +42,42 @@ type
     Arts: array of TArticle;
     BM: TBitmap;
     procedure AddArt(const ATitle, ADesc: String; const ASamples: array of String);
+    procedure GetArtStrings(out S1, S2, S3: String);
     procedure PrintArt(const AIndex: Integer);
     procedure ShowArt(const AIndex: Integer);
     procedure SetArts;
     procedure SetArtList(const AKindIndex: Integer);
     procedure SetInfo;
+    procedure SetInfoEng;
+    procedure SetInfoRus;
     procedure SetSigns;
+    procedure SetSignsEng;
+    procedure SetSignsRus;
     procedure SetBeforeSymbols;
+    procedure SetBeforeSymbolsEng;
+    procedure SetBeforeSymbolsRus;
     procedure SetAfterSymbols;
+    procedure SetAfterSymbolsEng;
+    procedure SetAfterSymbolsRus;
     procedure SetConcatenates;
+    procedure SetConcatenatesEng;
+    procedure SetConcatenatesRus;
     procedure SetBrackets;
+    procedure SetBracketsEng;
+    procedure SetBracketsRus;
     procedure SetGreekLetters;
+    procedure SetGreekLettersEng;
+    procedure SetGreekLettersRus;
     procedure SetArrows;
+    procedure SetArrowsEng;
+    procedure SetArrowsRus;
     procedure SetTokens;
+    procedure SetTokensEng;
+    procedure SetTokensRus;
     procedure SetFunctions;
+    procedure SetFunctionsEng;
+    procedure SetFunctionsRus;
+    procedure SetMainStrings;
   public
 
   end;
@@ -89,15 +115,33 @@ begin
   ListBox1.Items.Add(ATitle);
 end;
 
+procedure TForm1.GetArtStrings(out S1,S2,S3: String);
+begin
+  if EngRadioButton.Checked then
+  begin
+    S1:= 'String(Example ';
+    S2:= 'Entry:  ';
+    S3:= 'Result:  ';
+  end
+  else begin
+    S1:= 'String(Пример ';
+    S2:= 'Cтрока:  ';
+    S3:= 'Результат:  ';
+  end;
+end;
+
 procedure TForm1.PrintArt(const AIndex: Integer);
 var
   Builder: TExprBuilder;
   Expr: TExprClass;
   I, H: Integer;
+  S1, S2, S3: String;
 const
   dH1 = 5;
   dH2 = 10;
 begin
+  GetArtStrings(S1, S2, S3);
+
   Builder:= TExprBuilder.Create;
   try
     H:= 5;
@@ -105,7 +149,7 @@ begin
     Printer.BeginDoc;
     for I:=0 to High(Arts[AIndex].Samples) do
     begin
-      Expr:= Builder.BuildExpr('String(Пример №'+IntToStr(I+1)+':)');
+      Expr:= Builder.BuildExpr(S1+IntToStr(I+1)+':)');
       Expr.Canvas:= Printer.Canvas;
       Expr.Color:= clBlack;
       Expr.Font.Size:= 13;
@@ -113,7 +157,7 @@ begin
       H:= H + Expr.Height + dH1;
       FreeAndNil(Expr);
 
-      Expr:= TExprVar.Create('строка       : ');
+      Expr:= TExprVar.Create(S2);
       Expr.AddNext(TExprSimple.Create(Arts[AIndex].Samples[I]));
       Expr:= TExprChain.Create(Expr);
       Expr.Canvas:= Printer.Canvas;
@@ -123,7 +167,7 @@ begin
       H:= H + Expr.Height + dH1;
       FreeAndNil(Expr);
 
-      Expr:= TExprVar.Create('результат : ');
+      Expr:= TExprVar.Create(S3);
       Expr.AddNext(Builder.BuildExpr(Arts[AIndex].Samples[I]));
       Expr:= TExprChain.Create(Expr);
       Expr.Canvas:= Printer.Canvas;
@@ -144,6 +188,7 @@ var
   Builder: TExprBuilder;
   Expr: TExprClass;
   I, H, W: Integer;
+  S1, S2, S3: String;
 const
   {$IFDEF WINDOWS}
   dH1 = 0;
@@ -153,6 +198,8 @@ const
   {$ENDIF}
   dH2 = 10;
 begin
+  GetArtStrings(S1, S2, S3);
+
   Memo1.Text:= Arts[AIndex].Desc;
 
   BM.Width:= 3000;
@@ -167,7 +214,7 @@ begin
     SetOutputDPI;
     for I:=0 to High(Arts[AIndex].Samples) do
     begin
-      Expr:= Builder.BuildExpr('String(Пример №'+IntToStr(I+1)+':)');
+      Expr:= Builder.BuildExpr(S1+IntToStr(I+1)+':)');
       Expr.Color:= clRed;
       Expr.Canvas:= BM.Canvas;
       Expr.Font.Size:= 13;
@@ -176,7 +223,7 @@ begin
       if W<Expr.Width then W:= Expr.Width;
       FreeAndNil(Expr);
 
-      Expr:= TExprVar.Create('строка       : ');
+      Expr:= TExprVar.Create(S2);
       Expr.Color:= clGreen;
       Expr.AddNext(TExprSimple.Create(Arts[AIndex].Samples[I]));
       Expr.Next.Color:= clWindowText;
@@ -188,7 +235,7 @@ begin
       if W<Expr.Width then W:= Expr.Width;
       FreeAndNil(Expr);
 
-      Expr:= TExprVar.Create('результат : ');
+      Expr:= TExprVar.Create(S3);
       Expr.Color:= clGreen;
       Expr.AddNext(Builder.BuildExpr(Arts[AIndex].Samples[I]));
       Expr.Next.Color:= clWindowText;
@@ -225,6 +272,18 @@ begin
   PrintArt(ListBox1.ItemIndex);
 end;
 
+procedure TForm1.RusRadioButtonClick(Sender: TObject);
+begin
+  SetMainStrings;
+  SetArts;
+end;
+
+procedure TForm1.EngRadioButtonClick(Sender: TObject);
+begin
+  SetMainStrings;
+  SetArts;
+end;
+
 procedure TForm1.FormDestroy(Sender: TObject);
 begin
   FreeAndNil(BM);
@@ -239,6 +298,8 @@ procedure TForm1.ListBox1Click(Sender: TObject);
 begin
   ShowArt(ListBox1.ItemIndex);
 end;
+
+
 
 procedure TForm1.SetArtList(const AKindIndex: Integer);
 begin
@@ -259,7 +320,7 @@ begin
   ListBox1.ItemIndex:= 0;
 end;
 
-procedure TForm1.SetInfo;
+procedure TForm1.SetInfoRus;
 begin
   AddArt('1. Выражения',
      '     Строка, описывающая формулу состоит из выражений. К простым '+
@@ -342,7 +403,164 @@ begin
        '(1/2)*Int(x*(x-x^4)*Diff(x),0,1)=(1/2)*At(x^3/3-x^6/6,0,1)=1/12']);
 end;
 
+procedure TForm1.SetInfoEng;
+begin
+  AddArt('1. Expressions',
+     '     The string describing the formula consists of expressions. Simple '+
+     'expressions include identifiers, tokens, and numeric constants.'#13#10+
+     '     Tokens are reserved words used to denote special characters '+
+     '(see example 1). Tokens are case insensitive, '+
+     'with the exception of tokens denoting Greek letters. If the first '+
+     'character of such a token has an uppercase, then a capital letter '+
+     'is obtained, if the lower one is lowercase.'#13#10+
+     '     Identifiers are displayed as they are written. Identifiers can ' +
+     'consist of English and Russian letters and numbers. The identifier must '+
+     'begin with a letter. If the identifier begins with an English letter, '+
+     'it is displayed in italics (example 2), if with Russian - in the regular  '+
+     'font (example 3). You can display English text in regular font using '+
+     'the function String. If at the end of the identifier are numbers, '+
+     'and TExprBuilder.VarAutoIndex:=True (by default), then they are '+
+     'displayed as a subscript (example 4). If the numbers are after the '+
+     'token, then they are also displayed as a subscript (example 5).'#13#10+
+     '     Numeric constants are written in the Pascal syntax (example 6). '+
+     'You can use the English "e" or "E" to indicate the exponential part of '+
+     'the number. The optimal format for displaying the number is selected '+
+     'automatically. If this format doesn’t suit you for some reason, '+
+     'you can use the “#” symbol or the Num function.'#13#10+
+     '      Complex expressions consist of operands separated by operation ' +
+     'symbols. Operands can be one of the following types:'#13#10+
+     '     1. Simple expression i.e. numeric constant (including starting with '+
+     'the symbol "#"), identifier or token.'#13#10+
+     '     2. Expression enclosed in round, square or figure brackets.'#13#10+
+     '     3. Function.',
+     ['Alpha, alpha','EnglEnc','РУС','x12','beta0','1.234,0.7e9,1234678',
+      'B_(2*k)=((-1)^(n-1)**2*(2*k)!/(2*pi)^(2*k))*sum(1/n^(2*k),n=1,inf)']);
+  AddArt('2. Units of width ',
+      'Units of width are used in some reserved functions to set space. ' +
+      'One unit of width is approximately equal to the width of the vertical ' +
+      'line in the "+" symbol.', ['a&space(20)&b']);
+  AddArt('3. Functions',
+      '1. A function is a text followed by one or more arguments in parentheses. '+
+      'There are reserved function names.'#13#10+
+      '2. If the function name is not a reserved word, the result depends '+
+      'from the length of the name. Single-character function names are output '+
+      'in italics, and their arguments are always enclosed in parentheses '+
+      '(example 1). Longer function names are displayed in roman type and their '+
+      'arguments are enclosed in brackets only when necessary (example 2). '+
+      'You can force parentheses around an argument by using instead '+
+      'opening bracket combination "!(" (example 3).'#13#10+
+      '3. When raising a function to a power or adding an index to it, '+
+      'the signs of the corresponding operations must appear after the '+
+      'argument (example 4).'#13#10+
+      '4. The digits at the end of the function name are interpreted as '+
+      'a subscript if TExprBuilder.FuncAutoIndex:=True (default) (example 5).'#13#10+
+      '5. Greek character tokens, Nabla and PLambda tokens can be used  '+
+      'as function names. In this case the numbers '+
+      'at the end are also interpreted as a subscript (example 6).'#13#10+
+      '6. Reserved function names are case insensitive. ' +
+      'The following conventions are used:'#13#10+
+      '     E,E1,E2 etc. – arbitrary mandatory expressions (if you want '+
+      'the mandatory expression was empty, you need to insert '+
+      'the Nil token instead (example 7));'#13#10+
+      '     [,E1] etc. – arbitrary optional expressions (may not be written '+
+      'depending on the situation);'#13#10+
+      '     m,n,n1,n2 etc. – integer constants;'#13#10+
+      '     R - real constant.',
+      ['f(x,y,z)','cos(x), sin(pi/2+x), tg(1/x)','cos!(x)','f(x)_n,cos(x)^2',
+       'f0(x)=g1(x)','gamma0(x)', 'lim(x->0,f(x)), lim(Nil,f(x))']);
+  AddArt('4. Examples', 'Examples of various formulas',
+      ['Si!(x)=Int((sin(x)/x)*Diff(x),0,x)=pi/2-Int((sin(x)/x)*Diff(x),x,+Inf)=x-(1/3!)*(x^3/3)+(1/5!)*(x^5/5)-+...',
+       'FuncSub("Res",z=a,f(z))=lim(z->a,[(1/(m-1)!)*.DiffR(z,m-1)*[(z-a)^m*.f(z)]])',
+       'P(H_i&Divide&E)=P(H_i&Intersection&E)/P(E)=P(H_i)*P(E&Divide&H_i)/Sum(P(H_i)*P(E&Divide&H_i),i)',
+       '{StandC(1,1&space(15)&2)}_S&Ident&{StandC(1,2&space(15)&1)}_S&Ident&(G*E_thetao-F*G_u)/(2*(E*G-F^2))',
+       'SystemAnd(a11*x1+a12*x2+...+a_(1&n)*x_n=b1 & Comma,'+
+       'a21*x1+a22*x2+...+a_(2&n)*x_n=b2 & Comma,DotsV,'+
+       'a_(n&1)*x1+a_(n&2)*x2+...+a_nn*x_n=b_n & Semicolon)&'+
+       'String(     or     ) & Sum(a_(i*k)*b_i,k=1,n),!(i=1,2,...,n)',
+       'A*.X=B & String(,     где  )&'+
+       'A=!(Matrix(4,4,a11,a12,DotsH,a_(1&n),a21,a22,DotsH,a_(2&n),DotsV,DotsV,DotsH,DotsV,a_(n&1),a_(n&2),DotsH,a_nn))&comma(20)&'+
+       'X=!(StandC(x1,x2,DotsV,x_n))&comma(20)&B=!(StandC(b1,b2,DotsV,b_n)) & Dot',
+       'Int(Int(x*y*Diff(x)*Diff(y),x^2,sqrt(x)),0,1)=Int(At([(1/2)*x*y^2],x^2,sqrt(x))**Diff(x),0,1)='+
+       '(1/2)*Int(x*(x-x^4)*Diff(x),0,1)=(1/2)*At(x^3/3-x^6/6,0,1)=1/12']);
+end;
+
+procedure TForm1.SetInfo;
+begin
+  if EngRadioButton.Checked then
+    SetInfoEng
+  else
+    SetInfoRus;
+end;
+
 procedure TForm1.SetSigns;
+begin
+  if EngRadioButton.Checked then
+    SetSignsEng
+  else
+    SetSignsRus;
+end;
+
+procedure TForm1.SetSignsEng;
+begin
+  AddArt('  +', 'Addition',['a+b']);
+  AddArt('  -', 'Subtraction',['a-b']);
+  AddArt('  *',
+      'Multiplication. Checks if the factors can be multiplied unsigned. ' +
+      'If they can, then the multiplication sign is not used (example 1). ' +
+      'The factors can be interchanged to provide multiplication without ' +
+      'a character (example 2). If there are several numbers among the factors ' +
+      'then the numbers are combined into one (example 3). If multiplication ' +
+      'without a symbol is impossible under any order of factors the dot symbol ' +
+      'is used (example 4).',
+      ['5*x','y*2','2*a*3','sin(x)*cos(x)']);
+  AddArt('  **',
+      'Multiplication. The factors are unsigned multiplied regardless of whether ' +
+      'such multiplication is permissible. ' +
+      'The permutation of the factors is not performed.',
+      ['5**x','y**2','2**a**3','sin(x)**cos(x)']);
+  AddArt('  *.',
+      'Multiplication. The factors are multiplied using the dot sign. ' +
+      'The permutation of the factors is not performed.',
+      ['5*.x','y*.2','2*.a*.3','sin(x)*.cos(x)']);
+  AddArt('  *+',
+      'Multiplication. The factors are multiplied using the cross sign. ' +
+      'The permutation of the factors is not performed.',
+      ['5*+x','y*+2','2*+a*+3','sin(x)*+cos(x)']);
+  AddArt('  /',
+      'Division. The division in the form of a simple fraction is always used. ' +
+      'In complex expressions using various multiplication and division symbols ' +
+      'in random order, distributes the factors between the numerator and ' +
+      'denominator (example 2). To take the factor outside the fraction you ' +
+      'need to enclose the fraction in brackets (examples 3, 4 and 5).',
+      ['a/b','(x+1)/(x-1)*(x+2)/(x-2)/(x//y)*4','(1/2)*x','(3/4)*((x+1)/(x-1))','(3/4)*(x+1)/(x-1)']);
+  AddArt('  //',
+      'Division. A slash is used. In some cases, it removes the brackets ' +
+      'incorrectly (example 2). In this case, it is recommended ' +
+      'to use    “! ()” brackets (example 3).',
+      ['a//b','x//(2*y)','x//!(2*y)']);
+  AddArt('  /+', 'Division.', ['a/+b','x/+(2*y)','x/+!(2*y)']);
+  AddArt('  :', 'Division.', ['(1/2):(1/3):(1/4)=12/2=6','x:(2*y)','x:!(2*y)']);
+  AddArt('  \', 'Set difference.', ['A\B', 's&Belongs&Real\{0}', 'A\A=EmptySet']);
+  AddArt('  +-', 'Plus-minus.', ['a+-b', 'sin(A+-B)=sin(A)*cos(B)+-sin(B)*cos(A)']);
+  AddArt('  -+',  'Minus-plus.', ['a-+b', 'sin(A)+-sin(B)=2*sin((A+-B)/2)*cos((A-+B)/2)']);
+  AddArt('  =',  'Equally.', ['a=b']);
+  AddArt('  ==', 'Identically."', ['a==b']);
+  AddArt('  =~', 'Equal or same order.', ['a=~b']);
+  AddArt('  ~',  'Same order.', ['a~b']);
+  AddArt('  ~~', 'Approximately equal.', ['a~~b']);
+  AddArt('  <>', 'Not equal.', ['a<>b']);
+  AddArt('  >',  'More.', ['a>b']);
+  AddArt('  >>', 'Mach more.', ['a>>b']);
+  AddArt('  >~', 'More or same order.', ['a>~b']);
+  AddArt('  >=', 'More or equally.', ['a>=b']);
+  AddArt('  <',  'Less.', ['a<b']);
+  AddArt('  <<', 'Mach less.', ['a<<b']);
+  AddArt('  <~', 'Less or same order.', ['a<~b']);
+  AddArt('  <=', 'Less or equally.', ['a<=b']);
+  AddArt('  ->', 'Tends to.', ['a->b']);
+end;
+
+procedure TForm1.SetSignsRus;
 begin
   AddArt('  +', 'Символ "плюс", использующийя обычно для обозначения сложения',['a+b']);
   AddArt('  -', 'Символ "минус", использующийся обычно для обозначения вычитания',['a-b']);
@@ -403,6 +621,30 @@ end;
 
 procedure TForm1.SetBeforeSymbols;
 begin
+  if EngRadioButton.Checked then
+    SetBeforeSymbolsEng
+  else
+    SetBeforeSymbolsRus;
+end;
+
+procedure TForm1.SetBeforeSymbolsEng;
+begin
+  AddArt('  "_"',
+      'Vector. In some cases, incorrect placement of brackets is possible then ' +
+      'it is recommended to use the function Vect.',
+      ['_a',
+       'DiffRF(_a,t)=_i*.DiffRF(a_x,t)+_j*.DiffRF(a_y,t)+_k*.DiffRF(a_z,t)']);
+  AddArt('  "+"',  'Unary plus.',['+a', 'lim(x->+0,f(x)=1)']);
+  AddArt('  "-"',  'Unary minus.',['-a', 'lim(x->-0,f(x)=0)']);
+  AddArt('  "+-"', 'Unary plus-minus.', ['+-a']);
+  AddArt('  "-+"', 'Unary minus-plus.', ['-+a']);
+  AddArt('  "#"','Preceded by numeric constants to indicate that they should be ' +
+      'output in scientific format. Compare example 1 and example 2',
+      ['0.03*x','#0.03*x']);
+end;
+
+procedure TForm1.SetBeforeSymbolsRus;
+begin
   AddArt('  "_"',
       'Символ используется для обозначения вектора, ставится перед выражением. ' +
       'В некоторых случаях возможна неправильная расстановка скобок. В таких ' +
@@ -419,6 +661,42 @@ begin
 end;
 
 procedure TForm1.SetAfterSymbols;
+begin
+  if EngRadioButton.Checked then
+    SetAfterSymbolsEng
+  else
+    SetAfterSymbolsRus;
+end;
+
+procedure TForm1.SetAfterSymbolsEng;
+begin
+  AddArt('  "_"',
+      'Subscript. Symbol can be used if TExprBuilder.PostSymbols=True (default).'#13#10+
+      'In some cases incorrect placement of brackets or ' +
+      'multi-stage indexes is possible (example 2). In such cases it is ' +
+      'recommended to use the Ind function (example 3).',
+      ['a_b','a_x_0','Ind(a,Ind(x,0))']);
+  AddArt('  "^"',
+      'Superscript or exponentiation. Symbol can be used if TExprBuilder.PostSymbols=True (default).'#13#10+
+      'In some cases, incorrect placement of brackets or multi-stage indexes ' +
+      'is possible. In such cases, it is recommended to use the Pow function. ' +
+      'If used together with a subscript (character "_" or the Ind function) ' +
+      'then the subscript is indicated first, and then the superscript  ' +
+      '(example 2), otherwise the indices will not be displayed ' +
+      'correctly (example 3).',
+      ['a^b','Ind(x,a)^2, x_a^2','Ind(x^2,a), x^2_a']);
+   AddArt(' "!"',
+      'Factorial. Symbol can be used if TExprBuilder.PostSymbols=True (default).',
+      ['C_n^k=CaseAnd(n!/k!/(n-k)!,String(для )&0<=k<=n&Comma,0,String(для )&0<=n<k&Dot)']);
+   AddArt('  "`"',
+      'Derivative. Symbol can be used if TExprBuilder.PostSymbols=True (default).'#13#10+
+      'It is permissible to use several characters in a row to denote derivatives ' +
+      'of higher degrees. In some cases, incorrect placement of brackets is ' +
+      'possible. In such cases, it is recommended to use the Strokes function.',
+      ['f(x)`','f(x)```','X=x`*cos(Angle**!(x`,x))+y`*cos(Angle**!(y`,x))+z`*cos(Angle**!(z`,x))']);
+end;
+
+procedure TForm1.SetAfterSymbolsRus;
 begin
   AddArt('  "_"',
       'Символ используется для обозначения нижнего индекса. В некоторых случаях ' +
@@ -453,6 +731,34 @@ end;
 
 procedure TForm1.SetConcatenates;
 begin
+  if EngRadioButton.Checked then
+    SetConcatenatesEng
+  else
+    SetConcatenatesRus;
+end;
+
+procedure TForm1.SetConcatenatesEng;
+begin
+  AddArt('  "&"',
+      'Concatenation of two expressions. The character must either not be '+
+      'separated from both expressions by spaces (example 1) or separated ' +
+      'from each of them by one space (example 2).', ['x&y','x & y']);
+  AddArt('  ","',
+      'A character that separates multiple consecutive expressions. There can ' +
+      'be an arbitrary number of spaces after the character, but this does not ' +
+      'affect the spacing between expressions, which is seven units of width. ' +
+      'There must be no spaces before the character.',
+      ['a0,a1, a2,    a3']);
+  AddArt('  ";"',
+      'A character that separates multiple consecutive expressions. There can ' +
+      'be an arbitrary number of spaces after the character, but this does not ' +
+      'affect the spacing between expressions, which is seven units of width. ' +
+      'There must be no spaces before the character.',
+      ['a0;a1; a2;    a3']);
+end;
+
+procedure TForm1.SetConcatenatesRus;
+begin
   AddArt('  "&"',
       'Конкатенация двух выражений (не рисуется в изображении формулы). '+
       'Символ должен либо не отделяться от обоих ' +
@@ -474,7 +780,40 @@ end;
 
 procedure TForm1.SetBrackets;
 begin
-  AddArt('  ()',
+  if EngRadioButton.Checked then
+    SetBracketsEng
+  else
+    SetBracketsRus;
+end;
+
+procedure TForm1.SetBracketsEng;
+begin
+   AddArt('  ()',
+      'Parentheses are used to change the order in which actions are performed. ' +
+      'They can be removed by the expression builder if this does not lead to a ' +
+      'distortion of the meaning of the expression. Use the "!()" brackets to ' +
+      'force parentheses.'+
+      #13#10'More options for displaying brackets are provided by the Brackets function.',
+      ['(x+1)*(y-2)','(x+1)/(x-1)','a+(b+c)=d*.(e*.f)','a*(b+c)<>d+(e*f)','y=(1+1/(1+1/x))']);
+  AddArt('  !()',
+      'They are used in the same place as regular parentheses, but are never ' +
+      'removed by the expression builder.'+
+      #13#10'More options for displaying brackets are provided by the Brackets function.',
+      ['!(x+1)*!(y-2)','!(x+1)/!(x-1)','a+!(b+c)=d*.!(e*.f)','a*!(b+c)<>d+!(e*f)','y=!(1+1/!(1+1/x))']);
+  AddArt('  []', 'Square brackets. Never removed by the expression builder.'+
+      #13#10'More options for displaying brackets are provided by the Brackets function.',
+      ['[x+1]*[y-2]','[x+1]/[x-1]','a+[b+c]=d*.[e*.f]','a*[b+c]<>d+[e*f]','y=[1+1/[1+1/x]]']);
+  AddArt('  {}', 'Braces. Never removed by the expression builder.'+
+      #13#10'More options for displaying brackets are provided by the Brackets function.',
+      ['{x+1}*{y-2}','{x+1}/{x-1}','a+{b+c}=d*.{e*.f}','a*{b+c}<>d+{e*f}','y={1+1/{1+1/x}}']);
+  AddArt('  ||', 'Straight brackets. Never removed by the expression builder.'+
+      #13#10'More options for displaying brackets are provided by the Brackets function.',
+      ['|x+1|*|y-2|','|x+1|/|x-1|','a+|b+c|=d*.|e*.f|','a*|b+c|<>d+|e*f|','y=|1+1/|1+1/x||']);
+end;
+
+procedure TForm1.SetBracketsRus;
+begin
+   AddArt('  ()',
       'Круглые скобки, служат для изменения порядка выполнения действий. Могут ' +
       'быть убраны, если в это не приведёт к искажению смысла выражения. Для ' +
       'принудительной установки скобок используйте скобки !().'+
@@ -497,6 +836,44 @@ begin
 end;
 
 procedure TForm1.SetGreekLetters;
+begin
+  if EngRadioButton.Checked then
+    SetGreekLettersEng
+  else
+    SetGreekLettersRus;
+end;
+
+procedure TForm1.SetGreekLettersEng;
+begin
+  AddArt(' Alpha', 'Greek letter alpha', ['Alpha','alpha']);
+  AddArt(' Beta', 'Greek letter beta', ['Beta','beta']);
+  AddArt(' Gamma', 'Greek letter gamma', ['Gamma','gamma']);
+  AddArt(' Delta', 'Greek letter delta', ['Delta','delta', 'Delta=PDiffR(x,2)+PDiffR(y,2)+PDiffR(z,2)']);
+  AddArt(' Epsilon', 'Greek letter epsilon', ['Epsilon','epsilon']);
+  AddArt(' Zeta', 'Greek letter zeta', ['Zeta','zeta']);
+  AddArt(' Eta', 'Greek letter eta', ['Eta','eta']);
+  AddArt(' Theta', 'Greek letter theta', ['Theta','theta']);
+  AddArt(' thetao', 'Another spelling of Greek letter theta', ['thetao']);
+  AddArt(' Iota', 'Greek letter iota', ['Iota','iota']);
+  AddArt(' Kappa', 'Greek letter kappa', ['Kappa','kappa']);
+  AddArt(' Lambda', 'Greek letter lambda', ['Lambda','lambda']);
+  AddArt(' Mu', 'Greek letter mu', ['Mu','mu']);
+  AddArt(' Nu', 'Greek letter nu', ['Nu','nu']);
+  AddArt(' Xi', 'Greek letter xi', ['Xi','xi']);
+  AddArt(' Omicron', 'Greek letter omicron', ['Omicron','omicron']);
+  AddArt(' Pi', 'Greek letter pi', ['Pi','pi']);
+  AddArt(' Rho', 'Greek letter rho', ['Rho','rho']);
+  AddArt(' Sigma', 'Greek letter sigma', ['Sigma','sigma']);
+  AddArt(' sigmao', 'Another spelling of Greek letter sigma', ['sigmao']);
+  AddArt(' Tau', 'Greek letter tau', ['Tau','tau']);
+  AddArt(' Upsilon', 'Greek letter upsilon', ['Upsilon','upsilon']);
+  AddArt(' Phi', 'Greek letter phi', ['Phi','phi']);
+  AddArt(' Chi', 'Greek letter chi', ['Chi','chi']);
+  AddArt(' Psi', 'Greek letter psi', ['Psi','psi']);
+  AddArt(' Omega', 'Greek letter omega', ['Omega','omega']);
+end;
+
+procedure TForm1.SetGreekLettersRus;
 begin
   AddArt(' Alpha', 'Греческая буква альфа', ['Alpha','alpha']);
   AddArt(' Beta', 'Греческая буква бета', ['Beta','beta']);
@@ -527,6 +904,59 @@ begin
 end;
 
 procedure TForm1.SetArrows;
+begin
+  if EngRadioButton.Checked then
+    SetArrowsEng
+  else
+    SetArrowsRus;
+end;
+
+procedure TForm1.SetArrowsEng;
+begin
+  AddArt(' ArrowL', '', ['ArrowL']);
+  AddArt(' ArrowR', '', ['ArrowR']);
+  AddArt(' ArrowU', '', ['ArrowU']);
+  AddArt(' ArrowD', '', ['ArrowD']);
+  AddArt(' ArrowLR', '', ['ArrowLR']);
+  AddArt(' ArrowUD', '', ['ArrowUD']);
+  AddArt(' ArrowLU', '', ['ArrowLU']);
+  AddArt(' ArrowLD', '', ['ArrowLD']);
+  AddArt(' ArrowRU', '', ['ArrowRU']);
+  AddArt(' ArrowRD', '', ['ArrowRD']);
+  AddArt(' ArrowLN', '', ['ArrowLN']);
+  AddArt(' ArrowRN', '', ['ArrowRN']);
+  AddArt(' ArrowLRN', '', ['ArrowLRN']);
+  AddArt(' BArrowL', '', ['BArrowL']);
+  AddArt(' BArrowR', '', ['BArrowR']);
+  AddArt(' BArrowU', '', ['BArrowU']);
+  AddArt(' BArrowD', '', ['BArrowD']);
+  AddArt(' DArrowL', '', ['DArrowL']);
+  AddArt(' DArrowR', '', ['DArrowR']);
+  AddArt(' DArrowU', '', ['DArrowU']);
+  AddArt(' DArrowD', '', ['DArrowD']);
+  AddArt(' DArrowLR', '', ['DArrowLR']);
+  AddArt(' DArrowUD', '', ['DArrowUD']);
+  AddArt(' DArrowLU', '', ['DArrowLU']);
+  AddArt(' DArrowLD', '', ['DArrowLD']);
+  AddArt(' DArrowRU', '', ['DArrowRU']);
+  AddArt(' DArrowRD', '', ['DArrowRD']);
+  AddArt(' DArrowLN', '', ['DArrowLN']);
+  AddArt(' DArrowRN', '', ['DArrowRN']);
+  AddArt(' DArrowLRN', '', ['DArrowLRN']);
+  AddArt(' HArrowLR', '', ['HArrowLR']);
+  AddArt(' HArrowRL', '', ['HArrowRL']);
+  AddArt(' TArrowLR', '', ['TArrowLR']);
+  AddArt(' TArrowRL', '', ['TArrowRL']);
+  AddArt(' TArrowUD', '', ['TArrowUD']);
+  AddArt(' TArrowDU', '', ['TArrowDU']);
+  AddArt(' TArrowL', '', ['TArrowL']);
+  AddArt(' TArrowR', '', ['TArrowR']);
+  AddArt(' TArrowU', '', ['TArrowU']);
+  AddArt(' TArrowD', '', ['TArrowD']);
+  AddArt(' TRArrow', '', ['TRArrow']);
+end;
+
+procedure TForm1.SetArrowsRus;
 begin
   AddArt(' ArrowL', 'Одиночная стрелка влево', ['ArrowL']);
   AddArt(' ArrowR', 'Одиночная стрелка вправо', ['ArrowR']);
@@ -572,6 +1002,149 @@ begin
 end;
 
 procedure TForm1.SetTokens;
+begin
+  if EngRadioButton.Checked then
+    SetTokensEng
+  else
+    SetTokensRus;
+end;
+
+procedure TForm1.SetTokensEng;
+begin
+  AddArt(' ...', 'Ellipsis located at the level of punctuation marks.', ['f(x1,x2,...,x_n)=0']);
+  AddArt(' And', 'Logic "AND".', ['And']);
+  AddArt(' Angle', 'Angle sign.',
+        ['Angle**A',
+         'Triangle**(A1*B1*C1) & Similar & Triangle**(A2*B2*C2) & String(,  если )&' +
+         'SystemAnd(A1*B1=A2*B2&Comma, A1*C1=A2*C2&Comma, Angle**B1*A1*C1=Angle**B2*A2*C2&Dot)',
+         'X=x`*cos(Angle**!(x`,x))+y`*cos(Angle**!(y`,x))+z`*cos(Angle**!(z`,x))']);
+  AddArt(' Arc', 'Arc sign', ['Arc**AB']);
+  AddArt(' Asterisk',
+         'Asterisk - the symbol "*", somewhat lowered down compared to the usual ' +
+         'position. Intended for use in superscripts.',
+         ['Sum(a_n*a_n^Asterisk,n)=Int(Psi*Psi^Asterisk*Diff(q))']);
+  AddArt(' Begin', 'Beginning of proof (calculations).', ['Begin']);
+  AddArt(' Belongs', 'Belongs.',
+         ['Belongs', '[a,b]={x&Divide&x&Belongs&Real,a<=x<=b}']);
+  AddArt(' BelongsN', 'Not belongs.', ['BelongsN']);
+  AddArt(' Circle', 'Circle.', ['Circle']);
+  AddArt(' CircleC', 'Circle in circle.', ['CircleC']);
+  AddArt(' Colon',
+      'Colon. In most cases, it can be replaced with the Colon function.', ['x&colon&y']);
+  AddArt(' Comma',
+      'Comma. Unlike the "," character, it does not insert spaces after the comma. '+
+      'In most cases, it can be replaced by the "," character or by the Comma ' +
+      'function.', ['x&comma&y']);
+  AddArt(' Complex', 'Set of complex numbers.',
+      ['Complex', 'z&BArrowR&z^n, z&Belongs&Complex']);
+  AddArt(' Const',
+      'The word "const", denoting an arbitrary constant. Unlike regular ' +
+      'identifiers, it is written in roman type, not in italics.',
+      ['Const','Int(x*Diff(x))=x^2/2+const']);
+  AddArt(' CrossC', 'Cross in circle.', ['CrossC']);
+  AddArt(' Degree', 'Degree .', ['sin(30&Degree)=1/2']);
+  AddArt(' Divide', 'Devides.',
+        ['A&Divide&B', 'P(H_i&Divide&E)=P(H_i&Intersection&E)/P(E)']);
+  AddArt(' DivideN', 'Not Devides', ['A&DivideN&B']);
+  AddArt(' Dot', 'Dot', ['Dot']);
+  AddArt(' DotC', 'Dot in circle', ['DotC']);
+  AddArt(' DotEqual', 'Approaching the limit', ['DotEqual']);
+  AddArt(' DotEqualC', 'Geometrically equal', ['DotEqualC']);
+  AddArt(' DotEqualLR', 'Represent',
+         ['DotEqualLR', 'f(t)&DotEqualLR&F(omega)']);
+  AddArt(' DotEqualRL', 'Represent',
+         ['DotEqualRL', 'F(omega)&DotEqualRL&f(t)']);
+  AddArt(' DotsD', 'Diagonal dots. Can be used, for example, to indicate missing elements of a matrix',
+         ['DotsD', 'det(A)=|Matrix(3,3,a_11,DotsH,a_(1&n),DotsV,DotsD,DotsV,a_m1,DotsH,a_mn)|']);
+  AddArt(' DotsH', 'Horizontal dots. Can be used, for example, to indicate missing elements of a matrix',
+        ['DotsH', 'det(A)=|Matrix(3,3,a_11,DotsH,a_(1&n),DotsV,DotsD,DotsV,a_m1,DotsH,a_mn)|']);
+  AddArt(' DotsU', 'Diagonal dots. Can be used, for example, to indicate missing elements of a matrix',
+        ['DotsU']);
+  AddArt(' DotsV', 'Vertical dots. Can be used, for example, to indicate missing elements of a matrix',
+        ['DotsV', 'det(A)=|Matrix(3,3,a_11,DotsH,a_(1&n),DotsV,DotsD,DotsV,a_m1,DotsH,a_mn)|']);
+  AddArt(' Empty',
+        'Empty expression. Unlike Nil, it only has a width of zero, and the height ' +
+        'is equal to the height of the characters. ',
+        ['Empty^2']);
+  AddArt(' EmptySet', 'Empty set.',
+      ['EmptySet', 'G1&Intersection&G2=EmptySet']);
+  AddArt(' End', 'Ending of proof (calculations). Q.E.D', ['End']);
+  AddArt(' Entire', 'Set of integers.', ['Entire']);
+  AddArt(' EqualC', 'Equal in circle.', ['EqualC']);
+  AddArt(' Exists', 'Exists.',
+      ['Exists', 'Exists&x(x>1->ForAll&x(x>y&And&Exists&x(x&Divide&10)))']);
+  AddArt(' ExistsN', 'Not exists.', ['ExistsN']);
+  AddArt(' ForAll', 'For all.',
+      ['ForAll', 'a_(n+1)<=a_n&ForAll&n&Belongs&Natural']);
+  AddArt(' Ident', 'Identical. Sign analogue "==".', ['Ident']);
+  AddArt(' IdentN', 'Not identical.', ['IdentN']);
+  AddArt(' Inf', 'Infinity.', ['Inf', 'lim(x->0,1/x)=Inf']);
+  AddArt(' Intersection', 'Intersection.',
+        ['Intersection','P(H_i&Divide&E)=P(H_i&Intersection&E)/P(E)']);
+  AddArt(' Minus',
+      'Minus. Designed for use primarily in indexes. Other characters ' +
+      '("+", "=", etc.) can be displayed using the String function. But the '+
+      'expression "String(-)" will not give a minus, but a hyphen, which is ' +
+      'significantly shorter.',
+      ['a_Minus<>a_String(-)']);
+  AddArt(' MinusC', 'Minus in circle.', ['MinusC']);
+  AddArt(' Nabla', 'Hamilton operator.',
+      ['Nabla*f=PDiffRF(f,x)*_e_x+PDiffRF(f,y)*_e_y+PDiffRF(f,z)*_e_z',
+       'Nabla*_a=PDiffRF(a_x,x)+PDiffRF(a_y,y)+PDiffRF(a_z,z)']);
+  AddArt(' Natural', 'Set of natural numbers.',
+         ['Natural', 'M={x&Divide&x=1+(n+1)/n, n&Belongs&Natural}']);
+  AddArt(' Nil',
+      'An empty expression with zero dimensions. Intended for use in functions ' +
+      'where, according to the syntax, there should be an expression, but in a ' +
+      'specific case it is required that it should not be.', ['lim(nil,f(x))=0']);
+  AddArt(' Not', 'Logical negation.', ['Not']);
+  AddArt(' Or', 'Logical "OR"', ['Or']);
+  AddArt(' Parallel.',
+      'Parallel.', ['_a & Parallel & _b','H_Parallel']);
+  AddArt(' ParallelN',
+      'Not parallel.', ['_a & ParallelN & _b','H_ParallelN']);
+  AddArt(' Parallelogram', 'Parallelogram.',
+      ['Parallelogram', 'Parallelogram**ABCD', 'Parallelogram**A1*B1*C1*D1']);
+  AddArt(' Perpendicular',
+      'Perpendicular.', ['_a & Perpendicular & _b','v_Perpendicular']);
+  AddArt(' PLambda', 'Lambda with dash. Used, for example, in quantum mechanics.',['PLambda=lambda/2/pi']);
+  AddArt(' Planck', 'Planck''s constant.', ['Planck=h/2/pi']);
+  AddArt(' PlusC', 'Plus in circle.', ['PlusC']);
+  AddArt(' Projective', 'Projective space.', ['Projective']);
+  AddArt(' Prop', 'Proportionally.', ['Prop']);
+  AddArt(' Quadrate', 'Quadrate.',
+      ['Quadrate', 'Quadrate**ABCD', 'Quadrate**A1*B1*C1*D1']);
+  AddArt(' Quaternion', 'Hamilton''s set of quaternions.', ['Quaternion']);
+  AddArt(' Rational', 'Set of rational numbers.',
+         ['Rational', 'M={x&Divide&x&Belongs&Rational,0<=x<1}']);
+  AddArt(' Real', 'Set of real numbers.',
+         ['Real', '[a,b]={x&Divide&x&Belongs&Real,a<=x<=b}']);
+  AddArt(' Rectangle', 'Rectangle.',
+      ['Rectangle', 'Rectangle**ABCD', 'Rectangle**A1*B1*C1*D1']);
+  AddArt(' Rhomb', 'Rhomb.', ['Rhomb', 'Rhomb**ABCD', 'Rhomb**A1*B1*C1*D1']);
+  AddArt(' Semicolon',
+      'Semicolon. Unlike the character ";" does not insert spaces after the '+
+      'semicolon. In most cases, it can be replaced by the character ";" or the ' +
+      'Semicolon function.', ['x&semicolon&y']);
+  AddArt(' Similar', 'Similar.',
+        ['Similar',
+         'Triangle**(A1*B1*C1) & Similar & Triangle**(A2*B2*C2) & String(,  если )&' +
+         'SystemAnd(A1*B1=A2*B2&Comma, A1*C1=A2*C2&Comma, Angle**B1*A1*C1=Angle**B2*A2*C2&Dot)']);
+  AddArt(' SlashC', 'Slash in circle.', ['SlashC']);
+  AddArt(' SubSet', 'Subset.',
+        ['SubSet', 'M={!(x1,x2)&Divide&0<a<Sqr(x1)+Sqr(x2)<b}&SubSet&Real^2']);
+  AddArt(' SubSetN', 'Not subset.', ['SubSetN']);
+  AddArt(' SuperSet', 'Superset.', ['SuperSet']);
+  AddArt(' SuperSet', 'Not superset.', ['SuperSetN']);
+  AddArt(' Triangle', 'Triangle.',
+        ['Triangle',
+         'Triangle**(A1*B1*C1) & Similar & Triangle**(A2*B2*C2) & String(,  если )&' +
+         'SystemAnd(A1*B1=A2*B2&Comma, A1*C1=A2*C2&Comma, Angle**B1*A1*C1=Angle**B2*A2*C2&Dot)']);
+  AddArt(' Union', 'Union.', ['Union', 'Q&Union&[0,1]']);
+  AddArt(' Xor', 'Logical "XOR"', ['Xor']);
+end;
+
+procedure TForm1.SetTokensRus;
 begin
   AddArt(' ...', 'Многоточие, располагающееся на уровне знаков пунктуации.', ['f(x1,x2,...,x_n)=0']);
   AddArt(' And', 'Логическое "И"', ['And']);
@@ -706,6 +1279,246 @@ begin
 end;
 
 procedure TForm1.SetFunctions;
+begin
+  if EngRadioButton.Checked then
+    SetFunctionsEng
+  else
+    SetFunctionsRus;
+end;
+
+procedure TForm1.SetFunctionsEng;
+begin
+  AddArt(' Abs',
+      'Syntax: Abs(E). The absolute value of E. An analogue of brackets "||", ' +
+      'added for compatibility with Pascal syntax.',
+      ['Abs(x^2)=Abs(x)^2']);
+  AddArt(' At',
+      'Syntax: At(E1[,E2[,E3]]). E1 value under E2 condition (example 1) or '+
+      'E1 value from E2 to E3 (example 2).',
+      ['At(DiffRF(f,x),x=0)=1', 'Int(x*Diff(x),a,b)=At(x^2/2,a,b)=(b^2-a^2)/2']);
+  AddArt(' Brackets',
+      'Syntax: Brackets(S1S2,E). Encloses E in various brackets. ' +
+      'S1 can be the symbol "(", "[", "{", "|" or "0", "1", "2", "3", "4",'+
+      'S2 can be the symbol ")", "]", "}", "|" or "0", "1", "2", "3", "4" '+
+      #13#10' - "0" - means no parenthesis on that side,'+
+      #13#10' - "1" - angle brackets to denote, for example, the scalar product of vectors,'+
+      #13#10' - "2" - brackets, denoting rounding down to the nearest integer,'+
+      #13#10' - "3" - brackets, denoting rounding up to the nearest integer,'+
+      #13#10' - "4" - double straight brackets.',
+      ['Brackets((],0&comma&1)', 'Brackets(11,_a&comma(7)&_b)=_a*._b=a_x*b_x+a_y*b_y+a_z*b_z',
+       'Brackets(22,3.4)=3<>Brackets(33,3.4)=4', 'Brackets(23,3.4)=3',
+       'Brackets(23,3.6)=4', 'Brackets(44,_x)']);
+  AddArt(' Cap',
+      'Syntax: Cap(E). Sign "^" over E.',
+      ['Cap(x)']);
+  AddArt(' CaseAnd',
+      'Syntax: CaseAnd(E[,...]). Selecting one of the possible options with the ' +
+      '"AND" condition. Expressions in parentheses are pairs of conditional options.',
+      ['|x|=CaseAnd(-x,x<0,0,x=0,x,x>1)=1',
+       '|x|=CaseAnd(-x&comma,x<0&comma,0&comma,x=0&comma,x&comma,x>0&dot)=1']);
+  AddArt(' CaseOr',
+      'Syntax: CaseOr(E[,...]). Select one of the possible options with the ' +
+      '"OR" condition. Expressions in parentheses are pairs of conditional options.',
+      ['|x|=CaseOr(-x,x<0,0,x=0,x,x>1)=1',
+       '|x|=CaseOr(-x&comma,x<0&comma,0&comma,x=0&comma,x&comma,x>0&dot)=1']);
+  AddArt(' Circ',
+      'Syntax: Circ(E1[,E2[,E3]]). Closed-loop integral of the expression E1. '+
+      'E2 is placed under the integration sign, E3 is placed above it.',
+      ['Circ(F*Diff(L),L)',
+       'Circ([P(x,y)*Diff(x)+Q(x,y)*Diff(y)], C)=IntM(2, [PDiffRF(Q(x,y),x)-PDiffRF(P(x,y),y)]*Diff(x)*Diff(y), S)']);
+  AddArt(' Colon',
+      'Syntax: Colon(n). Inserts a colon into the expression followed by a ' +
+      'space n units of width ',
+      ['x & colon(15) & y']);
+  AddArt(' Comma',
+      'Syntax: Comma(n). Inserts a comma into the expression followed by a ' +
+      'space n units of width.',
+      ['x & comma(15) & y']);
+  AddArt(' Corr',
+      'Syntax: Corr(E[,...]). Arranges expressions in a lookup table of two '+
+      'columns separated by a vertical bar. Expressions in parentheses are ' +
+      'pairs of corresponding values.',
+      ['Int(x*sin(x)**Diff(x))=|Corr(u=x, u`=1, v`=sin(x), v=-cos(x))|=' +
+       'x*.(-cos(x))-Int(1*.(-cos(x))**Diff(x))=-x*cos(x)+sin(x)+const']);
+  AddArt(' Diff',
+      'Синтксис: Diff(E1[,E2]). Differential of the expression E1 raised to the power of E2.',
+      ['Diff(x)','Diff(x,n)']);
+  AddArt(' DiffN',
+      'Syntax: DiffN(E1[,E2]). Differential with E2 degree of E1 expression.',
+      ['DiffN(x)','DiffN(x,n)']);
+  AddArt(' DiffR',
+      'Syntax: DiffR(E1[,E2]). Derivative with E2 degree with respect to E1.',
+      ['DiffR(x)','DiffR(x,n)','DiffR(x,2)*f(x)=DiffR(x)*DiffR(x)*f(x)']);
+  AddArt(' DiffRF',
+      'Syntax: DiffRF(E1,E2[,E3]). Derivative with E3 degree of E1 with respect to E2.',
+      ['DiffRF(f,x)','DiffRF(f(x),x,n)']);
+  AddArt(' Dot',
+      'Syntax: Dot(n). Inserts a dot into the expression followed by a ' +
+      'space n units of width.',
+      ['x & dot(15) & y']);
+  AddArt(' Fact',
+      'Syntax: Fact(E). Factorial E.',
+      ['Fact(n)','Fact(k+1)']);
+  AddArt(' Func',
+      'Syntax: Func(E1,E2). Function with name E1 and argument E2.',
+      ['Func(PDiffRF(f,x,3),x)']);
+  AddArt(' FuncSub',
+      'Syntax: FuncSub("Name",E1,E2). Function named "Name" of expression E2 on condition E1.',
+      ['FuncSub("Res",z=z0,f(z))=(1/(2*pi*i))*Circ(f(z)*Diff(z), Abs(z-z0)=epsilon)',
+       'FuncSub("max",x&Belongs&[a,b],f(x))=max({f(a),...,f(b)})']);
+  AddArt(' Ind',
+      'Syntax: Ind(E1,E2). Adding a subscript to E1 as E2. In most cases ' +
+      'it can be replaced by the character "_". When used with the Pow function ' +
+      'must be applied before Pow (example 2).',
+      ['Ind(a,n)','Pow(Ind(x,n),2)=(Pow(Ind(x,n+1),2)+Pow(Ind(x,n-1),2))/2']);
+  AddArt(' Int',
+      'Syntax: Int(E1[,E2[,E3]]). Integral of expression E1. E2 is placed ' +
+      'under the integral sign, E3 is placed above it.',
+      ['F(x)=Int(f(x)*Diff(x))','Phi=Int(_H*Diff(_S),S)','Int(Diff(x),0,1)=1',
+      'M=Int(Diff(x)*Int(x*y*Diff(y),0,1-x),0,1)']);
+  AddArt(' IntM',
+      'Syntax: IntM(n,E1[,E2[,E3]]). Multiple integrals with fold n of the ' +
+      'expression E1. E2 is placed under the integral sign, E3 is placed above it. ' +
+      'If n=0, an integral with unknown multiplicity is drawn (ellipsis is used).',
+      ['IntM(3,f(x,y,z)*Diff(x)*Diff(y)*Diff(z),V)','IntM(0,f(x1,...,x_n)*DiffN(x,n))']);
+  AddArt(' Lim',
+      'Синтаскис: Lim(E1,E2). Limit of the expression E2 with the condition E1.',
+      ['Lim(Nil,f(x))=1','Lim(StandC(x->0,x>0),f(x))=1', 'Gamma(x+1)/Gamma(x)=Lim(n->Inf, n*x/(x+1+n))=x']);
+  AddArt(' Line',
+      'Syntax: Line(E). Horizontal line over E.',
+      ['Line(x)','Line(x^2)']);
+  AddArt(' Log',
+      'Syntax: Log(E1,E2). Logarithm of E2 to the base of E1.',
+      ['log(a,x+1)=ln(x+1)/ln(a)']);
+  AddArt(' Matrix',
+      'Syntax: Matrix(n,m,E[,...]). An m by n matrix. The expressions E and ' +
+      'those following it are placed in the cells of the matrix. There can be ' +
+      'fewer expressions than m*n - in this case, the last cells remain empty. '+
+      'he matrix is not framed by brackets, brackets must be added explicitly.',
+      ['Matrix(2,3,x,y,x-y,x+y,z,z+y)',
+       '!(Matrix(2,2,1,2,-3,4))',
+       'det(A)=|Matrix(3,3,a_11,DotsH,a_(1&n),DotsV,DotsD,DotsV,a_m1,DotsH,a_mn)|',
+       '[_a,_b]=|Matrix(3,3,_e_x,_e_y,_e_z,x_a,y_a,z_a,x_b,y_b,z_b)|']);
+  AddArt(' Num',
+      'Syntax: Num(R[,n1[,n2[,n3]]]). Allows you to control the notation format ' +
+      'of the number R. If the order of the number is less than or equal to -n3, ' +
+      'the scientific notation is used with an accuracy of n1, if it is greater - '+
+      'the usual notation with the number of digits before the point n1 and ' +
+      'the total n2. Default n1=4, n2=4, n3=2.',
+      ['Num(0.00123456)','Num(0.00123456, 6)','Num(0.00123456, 4, 4, 3)','Num(0.00123456, 4, 6, 3)']);
+  AddArt(' PDiff',
+      'Syntax: PDiff(E1[,E2]). The "partial differential" of the expression E1 ' +
+      'raised to the power of E2. From a mathematical point of view, such a ' +
+      '"differential" does not make sense, but the function is very convenient ' +
+      'for creating expressions like example 3.',
+      ['PDiff(x)','PDiff(x,n)','PDiffN(f(x,y),3)/PDiff(x)/PDiff(y,2)']);
+  AddArt(' PDiffN',
+      'Syntax: PDiffN(E1[,E2]). The "partial differential" of the power E2 of ' +
+      'the expression E1. From a mathematical point of view, such a ' +
+      '"differential" does not make sense, but the function is very convenient ' +
+      'for creating expressions like example 3.',
+      ['PDiffN(x)','PDiffN(x,n)','PDiffN(f(x,y),3)/PDiff(x)/PDiff(y,2)']);
+  AddArt(' PDiffR',
+      'Syntax: PDiffR(E1[,E2]). Partial derivative of the degree E2 with respect to E1.',
+      ['PDiffR(x)','PDiffR(x,n)','Nabla=PDiffR(x)*_e_x+PDiffR(y)*_e_y+PDiffR(z)*_e_z']);
+  AddArt(' PDiffRF',
+      'Syntax: PDiffRF(E1,E2[,E3]). Partial derivative of the degree E3 of the '+
+      'expression E1 with respect to E2.',
+      ['PDiffRF(f,x)','PDiffRF(f(x,y),x,n)']);
+  AddArt(' Points',
+      'Syntax: Points(E[,n]). Dots over E, usually meaning derivative with respect to time.',
+      ['Points(y,2)=y*Points(x)',
+       'x_k=x1-(Points(y)*(Points(x)^2+Points(y)^2))/(Points(x)*Points(y,2)-Points(y)*Points(x,2))&Comma(20)&'+
+       'y_k=y1+(Points(x)*(Points(x)^2+Points(y)^2))/(Points(x)*Points(y,2)-Points(y)*Points(x,2))&Dot']);
+  AddArt(' Pow',
+      'Syntax: Pow(E1,E2). Raising E1 to the power of E2. When used with a ' +
+      'Ind function, must be applied after Ind (Example 2). In most cases it ' +
+      'can be replaced by the "^" symbol.',
+      ['Pow(x+2,2//3)','Pow(Ind(x,a),3)']);
+  AddArt(' Prod',
+      'Syntax: Prod(E1[,E2[,E3]]). Product of expressions E1. E2 is placed ' +
+      'under the product sign, E3 is placed above it.',
+      ['Prod(a_i)','Prod(a_i,i<>j)','Prod(a_i,i=0,n)', 'Gamma(x)=(1/x)*Prod((1+1//n)^x/(1+x//n),n=1,Inf)']);
+  AddArt(' Root',
+      'Syntax: Root(E1,E2). Extracting the root of the degree E1 from the expression E2.',
+      ['Root(3,x-1)', 'Root(nil, x-1)']);
+  AddArt(' Semicolon',
+      'Syntax: Semicolon(n). Inserts a semicolon into the expression followed by ' +
+      'a space n units of width.',
+      ['x & semicolon(15) & y']);
+  AddArt(' Space',
+      'Syntax: Space(n). A space of n units of width. ' +
+      'Used to separate expressions.',
+      ['y=x & space(7) & z=q']);
+  AddArt(' Sqr',
+      'Syntax: Sqr(E). Squaring expression E. Has no advantage over using the ' +
+      '"^" character or the Pow function. Added for compatibility with Pascal ' +
+      'syntax.',
+      ['Sqr(a+b)=Sqr(a)+2*a*b+Sqr(b)']);
+  AddArt(' Sqrt',
+      'Syntax: Sqrt(E). Extracting the square root of E.',
+      ['Sqrt(x^2+y^2)']);
+  AddArt(' StandC',
+      'Syntax: StandC(E[,...]). Places multiple expressions one below the other, ' +
+      'centered.',
+      ['StandC(0<=i<n,i<>j)',
+       '{StandC(1,1&space(15)&2)}_S&Ident&{StandC(1,2&space(15)&1)}_S&Ident&(G*E_thetao-F*G_u)/(2*(E*G-F^2))',
+       '!(StandC(a,k))+!(StandC(a,k+1))=!(StandC(a+1,k+1))']);
+  AddArt(' StandL',
+      'Syntax: StandL(E[,...]). Places multiple expressions one below the other, ' +
+      'left aligned.',
+      ['StandL(0<=i<n,i<>j)']);
+  AddArt(' StandR',
+      'Syntax: StandR(E[,...]). Places multiple expressions one below the other, ' +
+      'right aligned.',
+      ['StandR(0<=i<n,i<>j)']);
+  AddArt(' String',
+      'Syntax: String(Text) или String("Text"). Text displayed in roman type ' +
+      'without modification. If the text contains parentheses, it must be ' +
+      'enclosed in double quotes.',
+      ['String(Arbitrary text)','String("Text (with parentheses)")']);
+  AddArt(' Strokes',
+      'Syntax: Strokes(E[,n]). Adds strokes to E, usually denoting a derivative.',
+      ['Strokes(f(x))','Strokes(y,3)']);
+  AddArt(' Sum',
+       'Syntax: Sum(E1[,E2[,E3]]). The sum of expressions E1. ' +
+       'E2 is placed under the sum sign, E3 is placed above it.',
+       ['Sum(a_i)','Sum(a_i,i<>j)','Sum(a_i,i=0,n)', '(a+b)^n=Sum((Fact(n)/Fact(k)/Fact(n-k))*Pow(a,n-k)*Pow(b,k),k=0,n)']);
+  AddArt(' Surf',
+      'Syntax: Surf(E1[,E2[,E3]]). Integral over a closed surface of the expression E1. ' +
+      'E2 is placed under the integration sign, E3 is placed above it.',
+      ['Surf(F*Diff(S),S)',
+       'Surf([P(x,y,z)*Diff(x)*Diff(z)+Q(x,y,z)*Diff(z)*Diff(x)+R(x,y,z)*Diff(x)*Diff(y)], S)='+
+       'IntM(3, [PDiffRF(P(x,y,z),x)+PDiffRF(Q(x,y,z),y)+PDiffRF(R(x,y,z),z)]*Diff(x)*Diff(y)*Diff(z), V)']);
+  AddArt(' Symbol',
+      'Syntax: Symbol(n). Inserts a UTF-16BE encoded character with decimal '+
+      'code n into an expression in roman.',
+      ['Symbol(198)=1', 'Symbol(8476)']);
+  AddArt(' SymbolI',
+      'Syntax: SymbolI(n). Inserts a UTF-16BE encoded character with decimal '+
+      'code n into an expression in italic.',
+      ['SymbolI(198)=1']);
+  AddArt(' SystemAnd',
+      'Syntax: SystemAnd(E[,...]). Combines expressions into square bracket system (with "AND" condition).',
+      ['SystemAnd(x+y=5,x*y=6)', 'SystemAnd(x+y=5 & Semicolon,x*y=6 & Dot)']);
+  AddArt(' SystemOr',
+      'Syntax: SystemOr(E[,...]). Combines expressions into a figure bracket system (with "OR" condition).',
+      ['x^2=4 & space(7) & DArrowR & space(7) & SystemOr(x=2 & comma, x=-2 & Dot)']);
+  AddArt(' Tilde',
+      'Syntax: Tilde(E). Sign "~" over E.',
+      ['Tilde(x)']);
+  AddArt(' Vect',
+      'Syntax: Vect(E). Arrow (vector sign) above E. In most cases, can be ' +
+      'replaced by the character "_" before E.',
+      ['Vect(a)',
+       'Vect(a(t))`=DiffRF(Vect(a),t)=Vect(i)*.DiffRF(a_x,t)+Vect(j)*.DiffRF(a_y,t)+Vect(k)*.DiffRF(a_z,t)']);
+  AddArt(' Volume',
+      'Syntax: Volume(E1[,E2[,E3]]). Integral over a closed volume of the ' +
+      'expression E1. E2 is placed under the integration sign, E3 is placed above it.',
+      ['Volume(F*Diff(V),V)']);
+end;
+
+procedure TForm1.SetFunctionsRus;
 begin
   AddArt(' Abs',
       'Синтаксис: Abs(E). Модуль E. Не имеет никаких преимуществ перед ' +
@@ -932,6 +1745,39 @@ begin
       'Синтаксис: Volume(E1[,E2[,E3]]). Интеграл по замкнутому объему выражения E1. Под знаком ' +
       'интегрирования ставится E2, над ним - E3.',
       ['Volume(F*Diff(V),V)']);
+end;
+
+procedure TForm1.SetMainStrings;
+begin
+  if EngRadioButton.Checked then
+  begin
+    Caption:= 'LazExprMake manual';
+    Button1.Caption:= 'Print';
+    TabControl1.Tabs[0]:= '1. Info';
+    TabControl1.Tabs[1]:= '2. Operation signs';
+    TabControl1.Tabs[2]:= '3. Characters before the operand';
+    TabControl1.Tabs[3]:= '4. Characters after the operand';
+    TabControl1.Tabs[4]:= '5. Expression concatenation';
+    TabControl1.Tabs[5]:= '6. Brackets';
+    TabControl1.Tabs[6]:= '7. Greek character tokens';
+    TabControl1.Tabs[7]:= '8. Arrow character tokens';
+    TabControl1.Tabs[8]:= '9. Other tokens';
+    TabControl1.Tabs[9]:= '10. Functions';
+  end
+  else begin
+    Caption:= 'Справочник LazExprMake';
+    Button1.Caption:= 'Печать';
+    TabControl1.Tabs[0]:= '1. Инфо';
+    TabControl1.Tabs[1]:= '2. Знаки операций';
+    TabControl1.Tabs[2]:= '3. Символы до операндов';
+    TabControl1.Tabs[3]:= '4. Символы после операндов';
+    TabControl1.Tabs[4]:= '5. Конкатенация выражений';
+    TabControl1.Tabs[5]:= '6. Скобки';
+    TabControl1.Tabs[6]:= '7. Токены греческого алфавита';
+    TabControl1.Tabs[7]:= '8. Токены-стрелки';
+    TabControl1.Tabs[8]:= '9. Токены прочие';
+    TabControl1.Tabs[9]:= '10. Зарезервированные функции';
+  end;
 end;
 
 end.

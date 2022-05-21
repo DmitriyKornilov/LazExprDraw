@@ -1,20 +1,21 @@
 object Form1: TForm1
   Left = 400
-  Height = 438
+  Height = 548
   Top = 250
-  Width = 703
+  Width = 879
   Caption = 'Справочник LazExprMake'
-  ClientHeight = 438
-  ClientWidth = 703
+  ClientHeight = 548
+  ClientWidth = 879
+  DesignTimePPI = 120
   OnCreate = FormCreate
   OnDestroy = FormDestroy
   OnShow = FormShow
-  LCLVersion = '2.0.0.4'
+  LCLVersion = '2.1.0.0'
   object TabControl1: TTabControl
     Left = 0
-    Height = 399
+    Height = 500
     Top = 0
-    Width = 703
+    Width = 879
     MultiLine = True
     OnChange = TabControl1Change
     TabIndex = 0
@@ -31,71 +32,76 @@ object Form1: TForm1
       '10. Зарезервированные функции'
     )
     Align = alClient
+    ParentFont = False
     TabOrder = 0
     object ListBox1: TListBox
       Left = 2
-      Height = 354
-      Top = 43
-      Width = 150
+      Height = 445
+      Top = 53
+      Width = 188
       Align = alLeft
       BorderStyle = bsNone
       ItemHeight = 0
       OnClick = ListBox1Click
+      ParentFont = False
       ScrollWidth = 150
       TabOrder = 1
     end
     object Splitter1: TSplitter
-      Left = 152
-      Height = 354
-      Top = 43
-      Width = 5
+      Left = 190
+      Height = 445
+      Top = 53
+      Width = 6
       ResizeStyle = rsLine
     end
     object Panel1: TPanel
-      Left = 157
-      Height = 354
-      Top = 43
-      Width = 544
+      Left = 196
+      Height = 445
+      Top = 53
+      Width = 681
       Align = alClient
       BevelOuter = bvNone
-      ClientHeight = 354
-      ClientWidth = 544
+      ClientHeight = 445
+      ClientWidth = 681
+      ParentFont = False
       TabOrder = 3
       object Memo1: TMemo
         Left = 0
-        Height = 219
+        Height = 274
         Top = 0
-        Width = 544
+        Width = 681
         Align = alTop
         Lines.Strings = (
           'Memo1'
         )
+        ParentFont = False
         ScrollBars = ssAutoVertical
         TabOrder = 0
       end
       object Splitter2: TSplitter
         Cursor = crVSplit
         Left = 0
-        Height = 5
-        Top = 219
-        Width = 544
+        Height = 6
+        Top = 274
+        Width = 681
         Align = alTop
         ResizeAnchor = akTop
         ResizeStyle = rsLine
       end
       object ScrollBox1: TScrollBox
         Left = 0
-        Height = 130
-        Top = 224
-        Width = 544
+        Height = 165
+        Top = 280
+        Width = 681
         HorzScrollBar.Page = 90
         VertScrollBar.Page = 90
         Align = alClient
         BorderStyle = bsNone
-        ClientHeight = 130
-        ClientWidth = 544
+        ClientHeight = 165
+        ClientWidth = 681
         Color = clWindow
         ParentColor = False
+        ParentFont = False
         TabOrder = 2
         object Image1: TImage
           AnchorSideLeft.Control = ScrollBox1
@@ -111,30 +117,62 @@ object Form1: TForm1
   end
   object Panel2: TPanel
     Left = 0
-    Height = 39
-    Top = 399
-    Width = 703
+    Height = 48
+    Top = 500
+    Width = 879
     Align = alBottom
     AutoSize = True
-    ClientHeight = 39
-    ClientWidth = 703
+    ClientHeight = 48
+    ClientWidth = 879
+    ParentFont = False
     TabOrder = 1
     object Button1: TButton
       AnchorSideLeft.Control = Panel2
       AnchorSideBottom.Control = Panel2
       AnchorSideBottom.Side = asrBottom
-      Left = 7
-      Height = 25
-      Top = 7
-      Width = 65
+      Left = 9
+      Height = 30
+      Top = 9
+      Width = 75
       Anchors = [akLeft, akBottom]
       AutoSize = True
-      BorderSpacing.Left = 6
-      BorderSpacing.Top = 6
-      BorderSpacing.Bottom = 6
+      BorderSpacing.Left = 8
+      BorderSpacing.Top = 8
+      BorderSpacing.Bottom = 8
       Caption = 'Печать'
       OnClick = Button1Click
+      ParentFont = False
       TabOrder = 0
+    end
+    object RusRadioButton: TRadioButton
+      AnchorSideLeft.Control = Button1
+      AnchorSideLeft.Side = asrBottom
+      AnchorSideTop.Control = Button1
+      AnchorSideTop.Side = asrCenter
+      Left = 104
+      Height = 24
+      Top = 12
+      Width = 78
+      BorderSpacing.Left = 20
+      Caption = 'Русский'
+      Checked = True
+      OnClick = RusRadioButtonClick
+      TabOrder = 2
+      TabStop = True
+    end
+    object EngRadioButton: TRadioButton
+      AnchorSideLeft.Control = RusRadioButton
+      AnchorSideLeft.Side = asrBottom
+      AnchorSideTop.Control = Button1
+      AnchorSideTop.Side = asrCenter
+      Left = 188
+      Height = 24
+      Top = 12
+      Width = 71
+      BorderSpacing.Left = 6
+      Caption = 'English'
+      OnClick = EngRadioButtonClick
+      TabOrder = 1
     end
   end
 end

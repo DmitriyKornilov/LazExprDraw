@@ -6,7 +6,7 @@ XITS fonts are available at [github](https://github.com/alif-type/xits). If only
 
 * LazExprDraw unit contains classes used to display mathematical formulas.
 * LazExprMake unit is used to create classes based on a symbolic formula entry.
-* The user manual is provided in "LazExprDraw_Guide.pdf".
+* The user manual is provided in "LazExprDraw_Guide(en).pdf".
 * The LazExprGuide application is a guide to using symbolic formula entry in unit LazExprMake and the demo.
 
 Considering the wishes of the author of the original code, the LazExprDraw and LazExprMake are offered under the free license [MIT](https://opensource.org/licenses/MIT)
@@ -20,7 +20,7 @@ ___
 
 * LazExprDraw содержит классы, использующиеся для отображения математических формул.
 * LazExprMake используется для создания классов на основании символьной записи формулы.
-* Руководство пользователя приведено в "LazExprDraw_Guide.pdf".
+* Руководство пользователя приведено в "LazExprDraw_Guide(rus).pdf".
 * Приложение LazExprGuide - это справочник по использованию LazExprMake и демо
 
 Учитывая пожелания автора оригинального кода, модули LazExprDraw и LazExprMake предлагаются по свободной лицензии [MIT](https://opensource.org/licenses/MIT) 
