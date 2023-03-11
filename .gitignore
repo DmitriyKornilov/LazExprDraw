@@ -19,12 +19,17 @@
 
 # Lazarus local files (user-specific info)
 *.lps
+*.lrj
 
 # Lazarus backups and unit output folders.
 # These can be changed by user in Lazarus/project options.
 backup/
 *.bak
 lib/
+
+# Application specific
+work/
+*.db
 
 # Application bundle for Mac OS
 *.app/
